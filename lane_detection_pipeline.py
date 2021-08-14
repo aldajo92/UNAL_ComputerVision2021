@@ -2,7 +2,7 @@ import numpy as np
 import os
 import cv2
 
-class Line():
+class Line:
     def __init__(self):
         # polynomial coefficients averaged over the last n iterations
         self.best_fit = None
@@ -47,10 +47,19 @@ class Line():
 
             return line_fit
 
-class LaneDetection():
-    def __init__(self):
+class LaneDetection:
+    def __init__(self, corners):
         # self._bird_view = np.empty(1)
+        self._current_frame = None
         self._result_segmentation = np.empty(1)
+
+        self.width = None
+        self.height = None
+
+        self.corners = corners
+        self.inv_corners = corners[::-1]
+        self.src_points = np.float32(self.inv_corners)
+        self._M_inv = None
 
     def _select_channel(self, bgr_img):
         hsv_img_lane = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2HSV)
@@ -61,20 +70,19 @@ class LaneDetection():
         binary[(img >= thresh_min) & (img <= thresh_max)] = 1
         return binary
     
-    def _bird_view(self, img, vertices):
+    def _bird_view(self, img):
         offset = 100 # offset for dst points
         img_size = (img.shape[1], img.shape[0])
-
-        src_points = np.float32(vertices)
         
         dst_points = np.float32([[offset, 0], [img_size[0]-offset, 0], 
                                     [img_size[0]-offset, img_size[1]], 
                                     [offset, img_size[1]]])
         
-        M = cv2.getPerspectiveTransform(src_points, dst_points)
-        self._M_inv = cv2.getPerspectiveTransform(dst_points, src_points)
+        M = cv2.getPerspectiveTransform(self.src_points, dst_points)
+        self._M_inv = cv2.getPerspectiveTransform(dst_points, self.src_points)
         warped = cv2.warpPerspective(img, M, img_size)
-        return warped, M, self._M_inv
+        # return warped, M, self._M_inv
+        return warped, M
     
     # def _detect_lines(self, binary_warped):
     #     # Check if lines were last detected; if not, re-run first_lines
@@ -210,12 +218,16 @@ class LaneDetection():
         righty = nonzeroy[right_lane_inds]
 
         return leftx, lefty, rightx, righty, out_img
-
+        
     def process_image(self, img):
+        if self._current_frame == None:
+            self.width, self.height = img.shape[:2]
+        self._current_frame = img
         s_channel = self._select_channel(img)
         binary = self._binary(img, 80, 255)
-        binary_bird_view = self._bird_view(binary)
-        self._detect_left_right_lanes(binary_bird_view)
+        binary_bird_view, M = self._bird_view(binary)
+        result = self._segmentation_lane_detection(binary_bird_view)
+        return result
 
 def draw_region(img, vertices):
     line_color = (0, 0, 255) ## color in BGR
