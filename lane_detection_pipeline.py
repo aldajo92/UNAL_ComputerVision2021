@@ -50,7 +50,7 @@ class Line:
 class LaneDetection:
     def __init__(self, corners):
         # self._bird_view = np.empty(1)
-        self._current_frame = None
+        self._current_frame = np.empty(0)
         self._result_segmentation = np.empty(1)
 
         self.width = None
@@ -59,7 +59,7 @@ class LaneDetection:
         self.corners = corners
         self.inv_corners = corners[::-1]
         self.src_points = np.float32(self.inv_corners)
-        self._M_inv = None
+        self._M_inv = np.empty(0)
 
     def _select_channel(self, bgr_img):
         hsv_img_lane = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2HSV)
@@ -220,13 +220,13 @@ class LaneDetection:
         return leftx, lefty, rightx, righty, out_img
         
     def process_image(self, img):
-        if self._current_frame == None:
+        if self._current_frame.size == 0:
             self.width, self.height = img.shape[:2]
         self._current_frame = img
         s_channel = self._select_channel(img)
-        binary = self._binary(img, 80, 255)
+        binary = self._binary(s_channel, 80, 255)
         binary_bird_view, M = self._bird_view(binary)
-        result = self._segmentation_lane_detection(binary_bird_view)
+        result = self._segmentation_lane_detection(binary_bird_view, img)
         return result
 
 def draw_region(img, vertices):
