@@ -9,8 +9,6 @@ RUN conda install jupyterlab -y
 
 RUN jupyter-lab --generate-config
 
-COPY ./jupyter_lab_config.py /root/.jupyter/jupyter_lab_config.py
-
 COPY ./environment.yml ./environment.yml
 
 RUN conda env create -f environment.yml
@@ -18,6 +16,10 @@ RUN conda env create -f environment.yml
 RUN conda install ipykernel
 
 RUN conda install -c conda-forge nb_conda_kernels
+
+COPY ./jupyter_lab_config.py /root/.jupyter/jupyter_lab_config.py
+
+COPY ./jupyter_lab_config.json /root/.jupyter/jupyter_lab_config.json
 
 # ENTRYPOINT ["/bin/bash"]
 CMD ["jupyter-lab", "./ComputerVisionProject/", "--allow-root"]

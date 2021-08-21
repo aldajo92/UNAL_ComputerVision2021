@@ -14,6 +14,8 @@ $ # run to execute the jupyter-lab container
 $ ./docker_scripts/run
 ```
 
+Once the docker container is running, open your web browser and go to http://localhost:8899. The password required is `unal2021`.
+
 ## Car used to capture images ##
 ![](./ComputerVisionProject/car.jpeg)
 
