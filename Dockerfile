@@ -19,7 +19,5 @@ RUN conda install ipykernel
 
 RUN conda install -c conda-forge nb_conda_kernels
 
-# RUN python -m ipykernel install --user --name=opencv
-
 # ENTRYPOINT ["/bin/bash"]
 CMD ["jupyter-lab", "./ComputerVisionProject/", "--allow-root"]
