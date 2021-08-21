@@ -5,7 +5,7 @@ The notebook called [Main](./ComputerVisionProject/Main.ipynb) is the file that 
 
 ## How to run and play with the project? ##
 
-This project is wrapped on a Docker container to run a jupyter-lab environment. Make sure that you have docker installed in your machine, then execute the [`build`](./docker_scripts/build) script once to create the container and [`run`](./docker_scripts/run) always:
+This project is wrapped on a Docker container to run a jupyter-lab environment. Make sure that you have docker installed in your machine. Open the OS Terminal and then execute the [`build`](./docker_scripts/build) script once to create the container and [`run`](./docker_scripts/run) always:
 
 ```
 $ # build to create the container (just need to be executed only once)
