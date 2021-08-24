@@ -17,9 +17,11 @@ RUN conda install ipykernel
 
 RUN conda install -c conda-forge nb_conda_kernels
 
-COPY ./jupyter_lab_config.py /root/.jupyter/jupyter_lab_config.py
+COPY ./.jupyter_config_files/jupyter_lab_config.py /root/.jupyter/jupyter_lab_config.py
 
-COPY ./jupyter_lab_config.json /root/.jupyter/jupyter_lab_config.json
+COPY ./.jupyter_config_files/jupyter_lab_config.json /root/.jupyter/jupyter_lab_config.json
+
+COPY ./.jupyter_config_files/themes.jupyterlab-settings /root/.jupyter/lab/user-settings/@jupyterlab/apputils-extension/themes.jupyterlab-settings
 
 # ENTRYPOINT ["/bin/bash"]
 CMD ["jupyter-lab", "./ComputerVisionProject/", "--allow-root"]
