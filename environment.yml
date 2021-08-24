@@ -2,6 +2,7 @@ name: opencv
 channels:
   - defaults
 dependencies:
+  - ipywidgets
   - ipykernel
   - python=3
   - numpy
