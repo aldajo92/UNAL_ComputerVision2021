@@ -17,6 +17,13 @@ $ ./docker_scripts/run
 
 Once the docker container is running, open your web browser and go to http://localhost:8899. The password required is `unal2021`.
 
+## Braitenberg ##
+Pipeline notebook development [MainBraitenberg](./ComputerVisionProject/MainBraitenberg.ipynb)
+
+Python pipeline [braitenberg_navigation.py](./ComputerVisionProject/braitenberg_navigation.py)
+
+Final pipeline development notebook [TestBraitenberg](./ComputerVisionProject/TestBraitenberg.ipynb)
+
 ## Car used to capture images ##
 ![](./ComputerVisionProject/car.jpeg)
 

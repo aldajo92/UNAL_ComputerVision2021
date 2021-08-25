@@ -20,11 +20,20 @@ class Braitenberg:
     def _check_activation(self, img_region_gray, active_value):
         b_region = self._binary(img_region_gray, 80, 255)
         return b_region.sum() > active_value
+
+    def _sense_pixels(self, img_region_gray):
+        b_region = self._binary(img_region_gray, 80, 255)
+        return b_region.sum()
     
     def _check_both_activation(self, img_l_gray, img_r_gray, active_value):
         activation_l = self._check_activation(img_l_gray, active_value)
         activation_r = self._check_activation(img_r_gray, active_value)
         return activation_l, activation_r
+    
+    def _sense_both_pixels(self, img_l_gray, img_r_gray):
+        value_l = self._sense_pixels(img_l_gray)
+        value_r = self._sense_pixels(img_r_gray)
+        return value_l, value_r
     
     def _get_left_right_regions_color(self, image):
         corners_l = self.l_corners
@@ -43,6 +52,6 @@ class Braitenberg:
     def process_image(self, image):
         selected_channel = self._select_channel(image)
         img_l_gray, img_r_gray = self._get_left_right_regions_gray(selected_channel)
-        activation_l, activation_r = self._check_both_activation(img_l_gray, img_r_gray, self.activation_value)
-        return activation_l, activation_r
+        value_l, value_r = self._sense_both_pixels(img_l_gray, img_r_gray)
+        return value_l, value_r
     
