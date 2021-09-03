@@ -9,6 +9,6 @@ docker run -it \
   -p 8899:8899 \
   --name=${PROJECT_NAME} \
   --volume ${PROJECT_ROOT}/ComputerVisionProject:/ComputerVisionProject \
-  --hostname=jetsonbot.local  \
+  --hostname=cvproject.local  \
   --rm \
   ${PROJECT_NAME}

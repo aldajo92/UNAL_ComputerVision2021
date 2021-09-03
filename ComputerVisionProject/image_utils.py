@@ -69,3 +69,21 @@ def show_left_right_gray(image_gray, img_l_gray, img_r_gray):
     ax0.imshow(image_gray, cmap='gray')
     ax1.imshow(img_l_gray, cmap='gray')
     ax2.imshow(img_r_gray, cmap='gray')
+
+def showAndSave(img, step, is_grayscale = False):
+    if is_grayscale:
+        plt.imshow(img, cmap='gray')
+        plt.imsave("results/line_detection_{}.jpeg".format(step), img, cmap='gray')
+    else:
+        bgr = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        plt.imshow(bgr)
+        plt.imsave("results/line_detection_{}.jpeg".format(step), bgr)
+
+def showAndSaveBR(img, step, is_grayscale = False):
+    if is_grayscale:
+        plt.imshow(img, cmap='gray')
+        plt.imsave("results/braitenberg_{}.jpeg".format(step), img, cmap='gray')
+    else:
+        bgr = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        plt.imshow(bgr)
+        plt.imsave("results/braitenberg_{}.jpeg".format(step), bgr)

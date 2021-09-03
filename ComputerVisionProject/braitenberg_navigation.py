@@ -1,12 +1,53 @@
 import numpy as np
 import cv2
 
+def getCorners(height, width):
+    mid_offset = 20
+    bottom_offset = 0
+    x_offset = 0
+    y_bottom_offset = 130
+    y_top_offset = 65
+
+    mid_y = height // 2
+    mid_width = width // 2
+
+    left_bottom = (0 + bottom_offset + x_offset, height - y_bottom_offset)
+    right_bottom = (width - bottom_offset + x_offset, height - y_bottom_offset)
+    apex1 = ( mid_width - mid_offset + x_offset, mid_y - y_top_offset)
+    apex2 = ( mid_width + mid_offset + x_offset, mid_y - y_top_offset)
+    corners = [left_bottom, right_bottom, apex2, apex1]
+
+    return corners
+
+def getLeftRightCorners(height, width):
+    rectange_w = 10
+    rectange_h = 40
+
+    margin_horizontal = 100
+    margin_top = 70
+
+    corners_region_l = [
+        (margin_horizontal, margin_top),
+        (margin_horizontal, rectange_h+margin_top),
+        (margin_horizontal+rectange_w, rectange_h+margin_top),
+        (margin_horizontal+rectange_w, margin_top)
+    ]
+    corners_region_r = [
+        (width-margin_horizontal-rectange_w, margin_top), 
+        (width-margin_horizontal-rectange_w, rectange_h+margin_top),
+        (width-margin_horizontal, rectange_h+margin_top),
+        (width-margin_horizontal, margin_top)
+    ]
+    
+    return corners_region_l, corners_region_r
+
 class Braitenberg:
     def __init__(self, corners_l, corners_r, activation_value):
         self.l_corners = corners_l
         self.r_corners = corners_r
         self.frame = np.empty(0)
         self.activation_value = activation_value
+        self.s_channel = np.empty(0)
     
     def _select_channel(self, bgr_img):
         hsv_img_lane = cv2.cvtColor(bgr_img, cv2.COLOR_BGR2HSV)
@@ -50,8 +91,29 @@ class Braitenberg:
         return img_l_gray, img_r_gray
     
     def process_image(self, image):
-        selected_channel = self._select_channel(image)
-        img_l_gray, img_r_gray = self._get_left_right_regions_gray(selected_channel)
+        self.s_channel = self._select_channel(image)
+        img_l_gray, img_r_gray = self._get_left_right_regions_gray(self.s_channel)
         value_l, value_r = self._sense_both_pixels(img_l_gray, img_r_gray)
-        return value_l, value_r
+        img_regions = self._draw_regions()
+        return img_regions, value_l, value_r
     
+    def _draw_regions(self):
+        vertices_l = self.l_corners
+        vertices_r = self.r_corners
+        line_color_l = (0, 0, 255)
+        line_color_r = (255, 0, 0)
+        thickness = 2
+
+        # image = np.copy(img)
+        image = cv2.cvtColor(self.s_channel, cv2.COLOR_GRAY2RGB)
+
+        image = cv2.line(image, vertices_l[0], vertices_l[1], line_color_l, thickness)
+        image = cv2.line(image, vertices_l[1], vertices_l[2], line_color_l, thickness)
+        image = cv2.line(image, vertices_l[2], vertices_l[3], line_color_l, thickness)
+        image = cv2.line(image, vertices_l[3], vertices_l[0], line_color_l, thickness)
+
+        image = cv2.line(image, vertices_r[0], vertices_r[1], line_color_r, thickness)
+        image = cv2.line(image, vertices_r[1], vertices_r[2], line_color_r, thickness)
+        image = cv2.line(image, vertices_r[2], vertices_r[3], line_color_r, thickness)
+        image = cv2.line(image, vertices_r[3], vertices_r[0], line_color_r, thickness)
+        return image
