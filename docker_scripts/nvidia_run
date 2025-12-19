@@ -1,0 +1,41 @@
+#!/bin/bash
+
+set -e
+
+PROJECT_ROOT="$(cd "$(dirname "$0")"; cd ..; pwd)"
+source ${PROJECT_ROOT}/config.sh
+
+echo "Starting JupyterLab container with NVIDIA GPU support..."
+echo "Access at: http://localhost:8899"
+echo "Password: unal2021"
+echo ""
+
+# Create persistent directories for cache and data
+mkdir -p ${PROJECT_ROOT}/.jupyter_cache
+mkdir -p ${PROJECT_ROOT}/.conda_cache
+
+docker run -it \
+    --privileged \
+    --runtime=nvidia \
+    --gpus all \
+    -e NVIDIA_VISIBLE_DEVICES=all \
+    -e NVIDIA_DRIVER_CAPABILITIES=all \
+    -e DISPLAY=${DISPLAY} \
+    -e TERM \
+    -e QT_X11_NO_MITSHM=1 \
+    -e XAUTHORITY \
+    -e XDG_RUNTIME_DIR=/tmp/runtime-root \
+    -v /tmp/.X11-unix:/tmp/.X11-unix:rw \
+    -v $XAUTHORITY:$XAUTHORITY \
+    -v ${HOME}/.Xauthority:/root/.Xauthority:rw \
+    --ipc="host" \
+    -p 8899:8899 \
+    --name=${PROJECT_NAME} \
+    --volume ${PROJECT_ROOT}:/workspace \
+    --volume ${PROJECT_ROOT}/.jupyter_cache:/root/.jupyter/cache:rw \
+    --volume ${PROJECT_ROOT}/.conda_cache:/opt/conda/pkgs:rw \
+    --hostname=cvproject.local \
+    --dns=8.8.8.8 \
+    --rm \
+    ${PROJECT_NAME}
+
